@@ -45,3 +45,16 @@ The recommended way to install is [to get the prebuilt Horse64 SDK](
 https://horse64.org/get) which includes [the moosec compiler for Moose64](
 /docs/Compilation.md).
 
+
+Where Is What?
+--------------
+
+If you want to contribute or report a bug, you'll find
+the Horse64 and Moose64 ecosystem is made of a larger
+bunch of projects. Due to that, **locating where each
+component is** and where the code is, can occasionally
+be challenging. Therefore, there's a
+[handy resource list for finding projects and
+code locations](
+https://horse64.org/docs/Resources) to help you out.
+
