@@ -1,5 +1,5 @@
 ## @module str
-# Copyright (c) 2024, ellie/@ell1e & m64 stdlib authors (see AUTHORS.md).
+# Copyright (c) 2024-2025, ellie/@ell1e & m64 stdlib authors (see AUTHORS.md).
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -241,7 +241,7 @@ func str.copy_from(other_str <- readonly str implicit ref) failable {
             as_ref(other_str), as_ref(self),
             memory.size_of(self)
         )
-        debug.assert(not self._on_heap)
+        assert(not self._on_heap)
     } else {
         if self._on_heap {
             memory.unalloc_array(self._heap_buf)
@@ -355,12 +355,12 @@ func num_to_str_buf(
     var writep <- byte c_array
     writep = buf
     while value >= 10 {
-        debug.assert(writep < buf + 63)
+        assert(writep < buf + 63)
         var subvalue <- u64 = value - (value % 10)
         deref(writep) = numsbuf[subvalue]
         writep += 1
     }
-    debug.assert(writep < buf + 63)
+    assert(writep < buf + 63)
     var subvalue <- u64 = value - (value % 10)
     deref(writep) = numsbuf[subvalue]
     writep += 1
@@ -368,7 +368,7 @@ func num_to_str_buf(
     if numlen > write_to_len {
         return 0
     }
-    debug.assert(numlen > 0)
+    assert(numlen > 0)
     memory.copy(buf, write_to, numlen)
     return numlen
 }
