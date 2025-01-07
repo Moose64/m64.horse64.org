@@ -16,7 +16,7 @@ indicated otherwise, licensed under the following **BSD-2-Clause
 license**:
 
 ```
-Copyright (c) 2024, ellie/@ell1e & m64 stdlib authors (see AUTHORS.md).
+Copyright (c) 2024-2025, ellie/@ell1e & m64 stdlib authors (see AUTHORS.md).
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -281,4 +281,3 @@ Same rules apply as for [main repo contributions, including the DCO](
     https://codeberg.org/Horse64/core.horse64.org/src/branch/main/LICENSE.md#contributions).
 Also, official moosec binaries may include [the official Horse64 logo](
     https://codeberg.org/Horse64/core.horse64.org/src/branch/main/LICENSE.md#logo-license) on top of above Moose64 logo.
-
