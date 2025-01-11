@@ -119,7 +119,7 @@ func str.init failable {
 }
 
 func str.get_byte(idx <- size) -> u8 {
-    var len = self.len
+    var len <- size = self.len
     if idx < 1 or idx > len {
         return 0
     }
@@ -148,7 +148,7 @@ func str.add(other_str <- readonly str implicit ref) failable {
 func str.add_byte(
         value <- byte
         ) failable override {
-    var own_len = self.len
+    var own_len <- size = self.len
     var needed_len <- size = own_len + 1 + 1
     if self._on_heap or needed_len > str_stack_bytes {
         var self_data <- byte c_array = self._stack_buf
@@ -272,13 +272,13 @@ func str.get_c_str readonly -> readonly byte c_array {
     return result
 }
 
-func format(format_mask -> readonly str,
-        ... -> multi(i8, i16, i32, i64,
+func format(format_mask <- readonly str,
+        ... <- multi(i8, i16, i32, i64,
             u8, u16, u32, u64,
             str implicit ref,
             any ref
             )) failable -> str {
-    var format_args_count = varargs.count
+    var format_args_count <- i32 = varargs.count
     var result <- str.str("")
     if failed(str.str) {
         return failed
@@ -309,7 +309,7 @@ func format(format_mask -> readonly str,
             }
         } elseif c == c"}" {
             if i + 1 <= len and
-                    str.get_byte(i + 1) == "}" {
+                    str.get_byte(i + 1) == c"}" {
                 result.add(c)
                 if failed(result.add) {
                     return failed
@@ -323,8 +323,8 @@ func format(format_mask -> readonly str,
     return result
 }
 
-func format_c_string(format_mask -> readonly byte c_array,
-        ... -> multi(i8, i16, i32, i64,
+func format_c_string(format_mask <- readonly byte c_array,
+        ... <- multi(i8, i16, i32, i64,
             u8, u16, u32, u64,
             str implicit ref,
             any ref
