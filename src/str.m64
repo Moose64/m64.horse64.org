@@ -272,15 +272,15 @@ func str.get_c_str readonly -> readonly byte c_array {
     return result
 }
 
-func format(format_mask <- readonly str,
+func format(format_mask <- readonly str implicit ref,
         ... <- multi(i8, i16, i32, i64,
             u8, u16, u32, u64,
             str implicit ref,
             any ref
             )) failable -> str {
     var format_args_count <- i32 = multi_args.len
-    var result <- str.str("")
-    if failed(str.str) {
+    var result <- str("")
+    if failed(str) {
         return failed
     }
     defer failed result.destroy()
@@ -299,7 +299,7 @@ func format(format_mask <- readonly str,
                 i += 2
                 continue
             } elseif i + 1 <= len and
-                    str.get_buf(i + 1) == c"}" {
+                    str.get_byte(i + 1) == c"}" {
                 result.add("<unprintable value>")
                 if failed(result.add) {
                     return failed
