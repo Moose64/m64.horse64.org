@@ -286,12 +286,12 @@ func format(format_mask <- readonly str implicit ref,
     defer failed result.destroy()
 
     var i <- size = 1
-    const len <- size = str.len
+    const len <- size = result.len
     while i <= len {
-        var c <- byte = str.get_byte(i)
+        var c <- byte = result.get_byte(i)
         if c == c"{" {
             if i + 1 <= len and
-                    str.get_byte(i + 1) == c"{" {
+                    result.get_byte(i + 1) == c"{" {
                 result.add(c)
                 if failed(result.add) {
                     return failed
@@ -299,7 +299,7 @@ func format(format_mask <- readonly str implicit ref,
                 i += 2
                 continue
             } elseif i + 1 <= len and
-                    str.get_byte(i + 1) == c"}" {
+                    result.get_byte(i + 1) == c"}" {
                 result.add("<unprintable value>")
                 if failed(result.add) {
                     return failed
@@ -309,7 +309,7 @@ func format(format_mask <- readonly str implicit ref,
             }
         } elseif c == c"}" {
             if i + 1 <= len and
-                    str.get_byte(i + 1) == c"}" {
+                    result.get_byte(i + 1) == c"}" {
                 result.add(c)
                 if failed(result.add) {
                     return failed
