@@ -118,7 +118,7 @@ func str.init failable {
     self._stack_buf_len = 1
 }
 
-func str.get_byte(idx <- size) -> u8 {
+func str.get_byte(idx <- size) readonly -> byte {
     var len <- size = self.len
     if idx < 1 or idx > len {
         return 0
@@ -157,7 +157,7 @@ func str.add_byte(
             self_data = self._heap_buf.data
             clear_data = self._heap_buf.data
         }
-        var new_data <- readonly byte c_array =
+        var new_data <- byte c_array =
             memory.alloc(needed_len)
         if failed(memory.alloc) {
             if clear_data != none {
@@ -194,7 +194,7 @@ func str.add_bytebuf(
             self_data = self._heap_buf.data
             clear_data = self._heap_buf.data
         }
-        var new_data <- readonly byte c_array =
+        var new_data <- byte c_array =
             memory.alloc(needed_len)
         if failed(memory.alloc) {
             if clear_data != none {
@@ -274,7 +274,7 @@ func str.get_c_str readonly -> readonly byte c_array {
 
 func format(format_mask <- readonly str implicit ref,
         ... <- multi(i8, i16, i32, i64,
-            u8, u16, u32, u64,
+            byte, u16, u32, u64,
             str implicit ref,
             any ref
             )) failable -> str {
@@ -325,7 +325,7 @@ func format(format_mask <- readonly str implicit ref,
 
 func format_c_string(format_mask <- readonly byte c_array,
         ... <- multi(i8, i16, i32, i64,
-            u8, u16, u32, u64,
+            byte, u16, u32, u64,
             str implicit ref,
             any ref
             )) failable override -> str {
