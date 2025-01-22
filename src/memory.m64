@@ -78,6 +78,9 @@ func alloc_array(item_size <- size, item_count <- size
             item_size * item_count)
     }
     result.len = item_count
+    if item_count == 0 and item_size == 0 {
+        result.len = array_size_unset
+    }
     return result
 }
 
