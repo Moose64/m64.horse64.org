@@ -62,11 +62,12 @@ func str.init_from_inline_c_str(
         ) failable override {
     var c_array_var <- readonly byte array =
         memory.alloc_array(
-            1, 0
+            0, 0
         )
     if failed(memory.alloc_array) {
         return failed
     }
+    defer memory.unalloc_array(c_array_var)
     c_array_var.data = c_str
     c_array_var.len = memory.c_str_nulpos(c_str)
     self.init_from_bytebuf(c_array_var)
@@ -74,7 +75,6 @@ func str.init_from_inline_c_str(
         return failed
     }
     c_array_var.data = none
-    memory.unalloc_array(c_array_var)
 }
 
 func str.init_from_bytebuf(
@@ -178,12 +178,33 @@ func str.add_byte(
     self._stack_buf_len = needed_len
 }
 
-func str.add_bytebuf(
-        c_str <- readonly byte array
+func str.add_c_str(
+        c_str <- readonly byte c_array
         ) failable override {
-    var c_str_len <- size = c_str.len
+    var byte_array <- readonly byte array =
+        memory.alloc_array(
+            0, 0
+        )
+    if failed(memory.alloc_array) {
+        return failed
+    }
+    defer memory.unalloc_array(byte_array)
+    byte_array.data = c_str
+    assert(byte_array.len == memory.array_size_unset)
+    self.add_bytebuf(
+        byte_array
+    )
+    if failed(self.add_bytebuf) {
+        return failed
+    }
+}
+
+func str.add_bytebuf(
+        bytebuf <- readonly byte array
+        ) failable override {
+    var c_str_len <- size = bytebuf.len
     if c_str_len == memory.array_size_unset {
-        c_str_len = memory.c_str_nulpos(c_str.data)
+        c_str_len = memory.c_str_nulpos(bytebuf.data)
     }
     var own_len <- size = self.len
     var needed_len <- size = c_str_len + own_len + 1
@@ -204,7 +225,7 @@ func str.add_bytebuf(
         }
         memory.copy(self_data, new_data, own_len)
         memory.copy(
-            c_str.data, new_data + own_len, c_str_len
+            bytebuf.data, new_data + own_len, c_str_len
         )
         new_data[own_len + c_str_len + 1] = 0
         self._heap_buf = new_data
@@ -213,7 +234,7 @@ func str.add_bytebuf(
         return
     }
     memory.copy(
-        c_str.data, self._stack_buf + own_len, c_str_len
+        bytebuf.data, self._stack_buf + own_len, c_str_len
     )
     self._stack_buf[own_len + c_str_len + 1] = 0
     self._stack_buf_len = needed_len
