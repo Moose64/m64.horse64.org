@@ -145,12 +145,51 @@ func str.add(other_str <- readonly str implicit ref) failable {
     }
 }
 
-func str.add_byte(
-        value <- byte
+func str.add_strs(
+        ... <- readonly str implicit ref
         ) failable override {
+    var other_len_total <- size = 0
     var own_len <- size = self.len
-    var needed_len <- size = own_len + 1 + 1
-    if self._on_heap or needed_len > str_stack_bytes {
+    var i <- size = 1
+    while i <= multi_args.len {
+        var other_str <- str
+        other_str = multi_args.get(i)
+        other_len_total += other_str.len
+        i += 1
+    }
+    if other_len_total == 0 {
+        return
+    }
+    var needed_bytes <- size = own_len + other_len_total + 1
+    self._grow_to_bytes(needed_bytes)
+    if failed(self._grow_to_bytes) {
+        return failed
+    }
+    var copy_to <- byte ref
+    if self._on_heap {
+        copy_to = self._heap_buf.data + own_len
+    } else {
+        copy_to = self._stack_buf + own_len
+    }
+    i = 1
+    while i <= multi_args.len {
+        var other_str <- str
+        if other_str._on_heap {
+            memory.copy(other_str._heap_buf.data,
+                copy_to, other_str.len)
+        } else {
+            memory.copy(other_str._stack_buf,
+                copy_to, other_str.len)
+        }
+        copy_to += other_str.len
+        i += 1
+    }
+    copy_to[1] = 0
+}
+
+func str._grow_to_bytes(new_bytes_size <- size) failable {
+    var own_len <- size = self.len
+    if self._on_heap or new_bytes_size > str_stack_bytes {
         var self_data <- byte c_array = self._stack_buf
         var clear_data <- byte c_array = none
         if self._on_heap {
@@ -158,24 +197,38 @@ func str.add_byte(
             clear_data = self._heap_buf.data
         }
         var new_data <- byte c_array =
-            memory.alloc(needed_len)
+            memory.alloc(new_bytes_size)
         if failed(memory.alloc) {
             if clear_data != none {
                 self._heap_buf.data = clear_data
             }
             return failed
         }
-        memory.copy(self_data, new_data, own_len)
-        new_data[own_len + 1] = value
-        new_data[own_len + 2] = 0
+        memory.copy(self_data, new_data, own_len + 1)
         self._heap_buf.data = new_data
         memory.unalloc(clear_data)
-        self._heap_buf.len = needed_len
+        self._heap_buf.len = new_bytes_size
+        return
+    }
+    self._stack_buf_len = new_bytes_size
+}
+
+func str.add_byte(
+        value <- byte
+        ) failable override {
+    var own_len <- size = self.len
+    var needed_bytes <- size = own_len + 1 + 1
+    self._grow_to_bytes(needed_bytes)
+    if failed(self._grow_to_bytes) {
+        return failed
+    }
+    if self._on_heap {
+        self._heap_buf.data[own_len + 1] = value
+        self._heap_buf.data[own_len + 2] = 0
         return
     }
     self._stack_buf[own_len + 1] = value
     self._stack_buf[own_len + 2] = 0
-    self._stack_buf_len = needed_len
 }
 
 func str.add_c_str(
@@ -207,37 +260,24 @@ func str.add_bytebuf(
         c_str_len = memory.c_str_nulpos(bytebuf.data)
     }
     var own_len <- size = self.len
-    var needed_len <- size = c_str_len + own_len + 1
-    if self._on_heap or needed_len > str_stack_bytes {
-        var self_data <- byte c_array = self._stack_buf
-        var clear_data <- byte c_array = none
-        if self._on_heap {
-            self_data = self._heap_buf.data
-            clear_data = self._heap_buf.data
-        }
-        var new_data <- byte c_array =
-            memory.alloc(needed_len)
-        if failed(memory.alloc) {
-            if clear_data != none {
-                self._heap_buf.data = clear_data
-            }
-            return failed
-        }
-        memory.copy(self_data, new_data, own_len)
+    var needed_bytes <- size = c_str_len + own_len + 1
+    self._grow_to_bytes(needed_bytes)
+    if failed(self._grow_to_bytes) {
+        return failed
+    }
+    if self._on_heap {
         memory.copy(
-            bytebuf.data, new_data + own_len, c_str_len
+            bytebuf.data,
+            self._heap_buf.data + own_len, c_str_len
         )
-        new_data[own_len + c_str_len + 1] = 0
-        self._heap_buf = new_data
-        memory.unalloc(clear_data)
-        self._heap_buf.len = needed_len
+        self._heap_buf[own_len + c_str_len + 1] = 0
         return
     }
     memory.copy(
-        bytebuf.data, self._stack_buf + own_len, c_str_len
+        bytebuf.data,
+        self._stack_buf + own_len, c_str_len
     )
     self._stack_buf[own_len + c_str_len + 1] = 0
-    self._stack_buf_len = needed_len
 }
 
 func str.len readonly -> size {
