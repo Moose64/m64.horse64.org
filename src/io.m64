@@ -66,10 +66,10 @@ func print_stderr_str(
         my_str <- readonly str.str implicit ref
         ) override {
     if my_str._on_heap {
-        if my_str._heap_buf.len > 1 {
+        if my_str._heap.buf.len > 1 {
             print_c_array(
-                my_str._heap_buf.data,
-                my_str._heap_buf.len - 1
+                my_str._heap.buf.data,
+                my_str._heap.buf.len - 1
             )
         }
     } else {
@@ -111,10 +111,10 @@ func print_c_array(data <- readonly byte c_array,
 
 func print_str(my_str <- readonly str.str implicit ref) override {
     if my_str._on_heap {
-        if my_str._heap_buf.len > 1 {
+        if my_str._heap.buf.len > 1 {
             print_c_array(
-                my_str._heap_buf.data,
-                my_str._heap_buf.len - 1
+                my_str._heap.buf.data,
+                my_str._heap.buf.len - 1
             )
         }
     } else {

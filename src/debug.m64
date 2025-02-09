@@ -58,9 +58,9 @@ func assert_with_str_msg(condition <- bool,
     var msg_data <- readonly byte c_array
     var msg_len <- size
     if msg._on_heap {
-        if msg._heap_buf.len > 1 {
-            msg_data = msg._heap_buf.data
-            msg_len = msg._heap_buf.len - 1
+        if msg._heap.buf.len > 1 {
+            msg_data = msg._heap.buf.data
+            msg_len = msg._heap.buf.len - 1
         }
     } else {
         if msg._stack_buf_len > 1 {
@@ -121,9 +121,9 @@ func assert_ex_with_str_msg(condition <- bool,
     var msg_data <- readonly byte c_array
     var msg_len <- size
     if msg._on_heap {
-        if msg._heap_buf.len > 1 {
-            msg_data = msg._heap_buf.data
-            msg_len = msg._heap_buf.len - 1
+        if msg._heap.buf.len > 1 {
+            msg_data = msg._heap.buf.data
+            msg_len = msg._heap.buf.len - 1
         }
     } else {
         if msg._stack_buf_len > 1 {
