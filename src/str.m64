@@ -112,7 +112,7 @@ func str.init_from_bytebuf(
     assert(self._heap.buf == none)
     self._heap.buf = as(strheap implicit ref,
         memory.alloc_array(
-            memory.size_of(self._heap_buf.data),
+            memory.size_of(self._heap.buf.data),
             str_len + 1
         ))
     if failed(memory.alloc_array) {
@@ -120,7 +120,7 @@ func str.init_from_bytebuf(
         return failed
     }
     memory.copy(
-        c_str.data, self._heap_buf.data, str_len
+        c_str.data, self._heap.buf.data, str_len
     )
     self._heap.buf[str_len + 1] = 0
     self._heap.buf.len = str_len + 1
@@ -322,7 +322,7 @@ func str.add_bytebuf(
 
 func str.len readonly -> size {
     if self._on_heap {
-        return self._heap_buf.len - 1
+        return self._heap.buf.len - 1
     }
     return self._stack_buf_len - 1
 }
@@ -369,7 +369,7 @@ func str.copy_from(
 func str.get_c_str readonly -> readonly byte c_array {
     var result <- readonly byte c_array
     if self._on_heap {
-        result = self._heap_buf.data
+        result = self._heap.buf.data
         return result
     }
     result = as(readonly byte c_array, self._stack_buf)
