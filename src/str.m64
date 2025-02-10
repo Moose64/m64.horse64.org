@@ -116,7 +116,7 @@ func str.init_from_bytebuf(
             str_len + 1
         ))
     if failed(memory.alloc_array) {
-        memory.unalloc(self._heap)
+        memory.unalloc(as_ref(self._heap))
         return failed
     }
     memory.copy(
@@ -339,7 +339,7 @@ func str.unown {
         self._heap.owners -= 1
         if self._heap.owners <= 0 {
             memory.unalloc_array(self._heap.buf)
-            memory.unalloc(self._heap)
+            memory.unalloc(as_ref(self._heap))
             self._heap = none
         }
     }
@@ -351,7 +351,7 @@ func str.copy_from(
     if self._on_heap {
         if self._heap.owners <= 1 {
             memory.unalloc_array(self._heap.buf)
-            memory.unalloc(self._heap)
+            memory.unalloc(as_ref(self._heap))
             self._heap = none
         } else {
             self._heap.owners -= 1
