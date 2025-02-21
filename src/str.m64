@@ -166,9 +166,9 @@ func str.add_strs(
     var other_len_total <- size = 0
     var own_len <- size = self.len
     var i <- size = 1
-    while i <= multi_args.len {
+    while i <= list_arg.len {
         var other_str <- str
-        other_str = multi_args.get(i)
+        other_str = list_arg.get(i)
         other_len_total += other_str.len
         i += 1
     }
@@ -187,7 +187,7 @@ func str.add_strs(
         copy_to = self._stack_buf + own_len
     }
     i = 1
-    while i <= multi_args.len {
+    while i <= list_arg.len {
         var other_str <- str
         if other_str._on_heap {
             memory.copy(other_str._heap.buf.data,
@@ -382,7 +382,7 @@ func format(format_mask <- readonly str implicit ref,
             str implicit ref,
             any ref
             )) failable -> str {
-    var format_args_count <- i32 = multi_args.len
+    var format_args_count <- i32 = list_arg.len
     var result <- str("")
     if failed(str) {
         return failed
@@ -438,7 +438,7 @@ func format_c_string(format_mask <- readonly byte c_array,
     }
 
     var result <- str =
-        format(format_mask_str, multi_args.forward())
+        format(format_mask_str, list_arg.forward())
     if failed(format) {
         return failed
     }
