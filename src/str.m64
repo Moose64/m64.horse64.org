@@ -167,7 +167,7 @@ func str.add_strs(
     var own_len <- size = self.len
     var i <- size = 1
     while i <= list_arg.len {
-        var other_str <- str
+        var other_str <- readonly str implicit ref
         other_str = list_arg.get(i)
         other_len_total += other_str.len
         i += 1
