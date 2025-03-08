@@ -133,6 +133,32 @@ func str.init failable {
     self._stack_buf_len = 1
 }
 
+func str.equals(other_str <- str) readonly -> bool {
+    if other_str.len != self.len {
+        return no
+    }
+    var data_buf_1 <- readonly byte c_array
+    var data_buf_2 <- readonly byte c_array
+    if self._on_heap {
+        data_buf_1 = self._heap.buf.data
+    } else {
+        data_buf_1 = self._stack_buf
+    }
+    if other_str._on_heap {
+        data_buf_2 = other_str._heap.buf.data
+    } else {
+        data_buf_2 = other_str._stack_buf
+    }
+    var i <- i32 = 1
+    while i <= self.len {
+        if data_buf_1[i] != data_buf_2[i] {
+            return no
+        }
+        i += 1
+    }
+    return yes
+}
+
 func str.get_byte(idx <- size) readonly -> byte {
     var len <- size = self.len
     if idx < 1 or idx > len {
