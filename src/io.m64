@@ -55,11 +55,11 @@ func print_stderr_c_array(data <- readonly byte c_array,
     var i <- size = 1
     while i <= data_len {
         c_stdlib.printf(
-            "%c", data[i]
+            "%c", [data[i]]
         )
         i += 1
     }
-    c_stdlib.printf("%s", "\n")
+    c_stdlib.printf("%s", ["\n"])
 }
 
 func print_stderr_str(
@@ -102,11 +102,11 @@ func print_c_array(data <- readonly byte c_array,
     var i <- size = 1
     while i <= data_len {
         c_stdlib.printf(
-            "%c", data[i]
+            "%c", [data[i]]
         )
         i += 1
     }
-    c_stdlib.printf("%s", "\n")
+    c_stdlib.printf("%s", ["\n"])
 }
 
 func print_str(my_str <- readonly str.str implicit ref) override {
