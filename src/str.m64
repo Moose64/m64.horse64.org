@@ -110,11 +110,11 @@ func str.init_from_bytebuf(
     }
     assert(self._heap.owners == 0)
     assert(self._heap.buf == none)
-    self._heap.buf = as(strheap implicit ref,
+    self._heap.buf =
         memory.alloc_array(
             memory.size_of(self._heap.buf.data),
             str_len + 1
-        ))
+        )
     if failed(memory.alloc_array) {
         memory.unalloc(as_ref(self._heap))
         return failed
