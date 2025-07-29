@@ -1,6 +1,6 @@
 
-m64 stdlib Authors
-==================
+m64 stdlib's Contributors
+=========================
 
 Those are the m64 stdlib package contributors (m64 stdlib, or
 `m64.horse64.org`, is the moose64 standard library) who created this project,
