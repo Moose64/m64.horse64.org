@@ -90,10 +90,11 @@ func unalloc(ptr <- any c_array) {
 }
 
 func unalloc_array_with_readonly_data(
-        ptr <- readonly any array) override {
-    if ptr == none {
+        arr <- readonly any array) override {
+    if arr == none {
         return
     }
+    var ptr <- any ref = as(any ref, arr)
     c_stdlib.free(ptr)
 }
 
