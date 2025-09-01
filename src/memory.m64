@@ -45,7 +45,8 @@ func c_str_nulpos(str_ref <- readonly byte c_array) -> size {
 
 func copy(origin <- readonly any ref, dest <- any ref,
             amount <- size) {
-    c_stdlib.memmove(dest, origin, amount)
+    var _unused <- any ref
+    _unused = c_stdlib.memmove(dest, origin, amount)
 }
 
 func alloc(amount <- size) failable -> any ref {
@@ -54,6 +55,11 @@ func alloc(amount <- size) failable -> any ref {
         return failed
     }
     return result
+}
+
+func clear(item <- any ref, item_size <- size) {
+    var _unused <- any ref
+    _unused = c_stdlib.memset(item, 0, item_size)
 }
 
 func alloc_array(item_size <- size, item_count <- size
@@ -65,7 +71,7 @@ func alloc_array(item_size <- size, item_count <- size
     if array_addr == none {
         return failed
     }
-    c_stdlib.memset(array_addr, 0, size_of(result))
+    clear(array_addr, size_of(result))
     result = as(any array, array_addr)
     if item_count > 0 and item_size > 0 {
         result.data = c_stdlib.malloc(
@@ -75,8 +81,7 @@ func alloc_array(item_size <- size, item_count <- size
             c_stdlib.free(array_addr)
             return failed
         }
-        c_stdlib.memset(result.data, 0,
-            item_size * item_count)
+        clear(result.data, item_size * item_count)
     }
     result.len = item_count
     if item_count == 0 and item_size == 0 {
